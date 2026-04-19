@@ -13,10 +13,10 @@ type Config struct {
 
 type Postgres struct {
 	User     string `env:"POSTGRES_USER" env-default:"postgres"`
-	Password string `env:"POSTGRES_PASSWORD" env-default:"postgres"`
+	Password string `env:"POSTGRES_PASS" env-default:"1234"`
 	Host     string `env:"POSTGRES_HOST" env-default:"localhost"`
 	Port     int    `env:"POSTGRES_PORT" env-default:"5432"`
-	Database string `env:"POSTGRES_DATABASE" env-default:"postgres"`
+	Database string `env:"POSTGRES_DB" env-default:"postgres"`
 	MaxConn  int    `env:"POSTGRES_MAX_CONN" env-default:"10"`
 	MinConn  int    `env:"POSTGRES_MIN_CONN" env-default:"2"`
 }

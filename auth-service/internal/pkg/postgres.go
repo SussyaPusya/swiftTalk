@@ -2,9 +2,11 @@ package pkg
 
 import (
 	"context"
+	"errors"
 	"fmt"
 
 	"github.com/SussyaPusya/swiftTalk/auth-service/config"
+	"github.com/golang-migrate/migrate/v4"
 	_ "github.com/golang-migrate/migrate/v4/database/postgres"
 	_ "github.com/golang-migrate/migrate/v4/source/file"
 	"github.com/jackc/pgx/v5/pgxpool"
@@ -29,6 +31,25 @@ func NewPostgres(ctx context.Context, config *config.Postgres) (*pgxpool.Pool, e
 	if err := conn.Ping(ctx); err != nil {
 
 		fmt.Println(err)
+	}
+
+	migraton, err := migrate.New(
+		"file://migrations",
+		fmt.Sprintf("postgres://%s:%s@%s:%d/%s?sslmode=disable",
+			config.User,
+			config.Password,
+			config.Host,
+			config.Port,
+
+			config.Database,
+		))
+
+	if err != nil {
+		return nil, fmt.Errorf("unable to create migrations: %w", err)
+	}
+
+	if err := migraton.Up(); err != nil && !errors.Is(err, migrate.ErrNoChange) {
+		return nil, fmt.Errorf("unable to run migrations: %w", err)
 	}
 
 	return conn, nil
