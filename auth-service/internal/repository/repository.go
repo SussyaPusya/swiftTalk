@@ -73,7 +73,8 @@ func (r *repository) GetUserByUsername(ctx context.Context, username string) (*m
 func (r *repository) ChangePassword(ctx context.Context, userID string, newPassword string) error {
 	query := sq.Update("users").
 		Set("password", newPassword).
-		Where(sq.Eq{"id": userID})
+		Where(sq.Eq{"id": userID}).
+		PlaceholderFormat(sq.Dollar)
 	sql, args, err := query.ToSql()
 	if err != nil {
 		return err
@@ -89,7 +90,8 @@ func (r *repository) ChangePassword(ctx context.Context, userID string, newPassw
 func (r *repository) ChangeName(ctx context.Context, userID string, newName string) error {
 	query := sq.Update("users").
 		Set("name", newName).
-		Where(sq.Eq{"id": userID})
+		Where(sq.Eq{"id": userID}).
+		PlaceholderFormat(sq.Dollar)
 	sql, args, err := query.ToSql()
 	if err != nil {
 		return err
