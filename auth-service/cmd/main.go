@@ -44,7 +44,7 @@ func main() {
 	}
 
 	middleware := transport.NewMiddleware(jwt)
-	router := transport.NewRouter(srvc, middleware)
+	router := transport.NewRouter(srvc, middleware, jwt)
 
 	grpcHandler := transport.NewGRPCHandlers(jwt)
 

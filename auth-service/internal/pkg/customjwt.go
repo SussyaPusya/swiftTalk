@@ -54,10 +54,10 @@ func NewJWTManager(privatePath, publicPath string) (*JWTManager, error) {
 		refreshStore: &refreshMemoryStore{tokens: make(map[string]string)},
 	}, nil
 }
-
-func (m *JWTManager) GenerateAccessToken(username string, ttl time.Duration) (string, error) {
+func (m *JWTManager) GenerateAccessToken(username string, userID string, ttl time.Duration) (string, error) {
 	claims := &Claims{
 		Username: username,
+		UserID:   userID,
 		RegisteredClaims: jwt.RegisteredClaims{
 			ExpiresAt: jwt.NewNumericDate(time.Now().Add(ttl)),
 			Issuer:    "Pidor",
@@ -67,9 +67,10 @@ func (m *JWTManager) GenerateAccessToken(username string, ttl time.Duration) (st
 	return token.SignedString(m.privateKey)
 }
 
-func (m *JWTManager) GenerateRefreshToken(username string, ttl time.Duration) (string, error) {
+func (m *JWTManager) GenerateRefreshToken(username string, userID string, ttl time.Duration) (string, error) {
 	claims := &Claims{
 		Username: username,
+		UserID:   userID,
 		RegisteredClaims: jwt.RegisteredClaims{
 			ExpiresAt: jwt.NewNumericDate(time.Now().Add(ttl)),
 			Issuer:    "Pidor",
@@ -114,7 +115,7 @@ func (m *JWTManager) RefreshAccessToken(refreshToken string, ttl time.Duration) 
 	if !ok || username != claims.Username {
 		return "", errors.New("refresh token not recognized")
 	}
-	return m.GenerateAccessToken(username, ttl)
+	return m.GenerateAccessToken(username, claims.UserID, ttl)
 }
 
 func (m *JWTManager) RevokeRefreshToken(token string) {

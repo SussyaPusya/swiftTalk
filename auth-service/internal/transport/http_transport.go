@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	"github.com/SussyaPusya/swiftTalk/auth-service/internal/models"
+	"github.com/SussyaPusya/swiftTalk/auth-service/internal/pkg"
 
 	"github.com/gin-gonic/gin"
 )
@@ -19,11 +20,12 @@ type Service interface {
 }
 type router struct {
 	s          Service
+	j          *pkg.JWTManager
 	middleware *Middleware
 }
 
-func NewRouter(s Service, middleware *Middleware) *router {
-	return &router{s: s, middleware: middleware}
+func NewRouter(s Service, middleware *Middleware, j *pkg.JWTManager) *router {
+	return &router{s: s, middleware: middleware, j: j}
 }
 
 func (r *router) Run() {
@@ -61,7 +63,24 @@ func (r *router) login(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, user)
+	accessToken, err := r.j.GenerateAccessToken(user.Username, user.ID, models.AccessTokenTTL)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	refreshToken, err := r.j.GenerateRefreshToken(user.Username, user.ID, models.RefreshTokenTTL)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	resp := models.LoginResponseDTO{
+		AccessToken:  accessToken,
+		RefreshToken: refreshToken,
+	}
+
+	c.JSON(http.StatusOK, resp)
 
 }
 

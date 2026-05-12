@@ -29,3 +29,8 @@ type ChangeNameDTO struct {
 	OldName string `json:"oldName"`
 	NewName string `json:"newName"`
 }
+
+type LoginResponseDTO struct {
+	AccessToken  string `json:"accessToken"`
+	RefreshToken string `json:"refreshToken"`
+}
