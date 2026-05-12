@@ -1,0 +1,96 @@
+syntax = "proto3";
+
+option go_package = "api/chat_service";
+
+package api;
+
+
+import "google/api/annotations.proto";
+service Account_Service {
+
+  rpc Ping(PingRequest) returns (PingResponse);
+
+  rpc CreateUser(CreateUserRequest) returns (CreateUserResponse){};
+
+  rpc UpdateUser(UpdateUserRequest) returns (UpdateUserResponse){
+    option  (google.api.http) ={
+      post: "/api/account_service/UpdateUser"
+       body: "*"
+    };
+  };
+
+  rpc DeleteUser(DeleteUserRequest) returns (DeleteUserResponse){};
+
+  rpc CreateBuisness(CreateBuisnessRequest) returns (CreateBuisnessResponse){
+    option  (google.api.http) ={
+      post: "/api/account_service/CreateBuisness"
+       body: "*"
+    };
+  };
+
+  rpc GetBuisness(GetBuisnessRequest) returns (GetBuisnessResponse){};
+
+}
+message PingRequest {}
+
+message PingResponse {
+  string pingMessage = 1;
+}
+
+message CreateBuisnessRequest{
+  string jwt = 1;
+  string name = 2;
+}
+
+message CreateBuisnessResponse{}
+
+message GetBuisnessRequest{
+  string id = 1;
+
+}
+
+message GetBuisnessResponse{
+  string name = 1;
+}
+
+
+message CreateUserRequest{
+
+  string id = 1;
+
+  string name = 2;
+
+  string surname = 3;
+
+  string avatar_url = 4;
+
+  int32 age = 5;
+
+  string country = 6;
+}
+
+message CreateUserResponse{}
+
+message UpdateUserRequest{
+
+  string jwt = 1;
+
+  string name = 2;
+
+  string surname = 3;
+
+  string avatar_url = 4;
+
+  int32 age = 5;
+
+  string country = 6;
+}
+
+message UpdateUserResponse{}
+
+
+message DeleteUserRequest{
+  string id = 1;
+}
+
+message DeleteUserResponse{}
