@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	"github.com/SussyaPusya/swiftTalk/auth-service/internal/models"
+
 	"github.com/gin-gonic/gin"
 )
 
@@ -17,7 +18,8 @@ type Service interface {
 	ChangeName(ctx context.Context, userID string, newName string) error
 }
 type router struct {
-	s Service
+	s          Service
+	middleware *Middleware
 }
 
 func NewRouter(s Service) *router {
@@ -30,10 +32,15 @@ func (r *router) Run() {
 	api := ginRouter.Group("/api")
 	{
 		api.POST("/login", r.login)
-		api.POST("/users", r.createUser)
-		api.GET("/users/:userID", r.getUserByID)
-		api.PUT("/users/:userID/password", r.changePassword)
-		api.PUT("/users/:userID/name", r.changeName)
+		api.POST("/register", r.createUser)
+		users := ginRouter.Group("/users")
+		{
+
+			users.GET("/:userID", r.getUserByID)
+			users.PUT("/:userID/password", r.changePassword)
+			users.PUT("/:userID/name", r.changeName)
+		}
+		users.Use(r.middleware.AuthMiddleware())
 	}
 
 	ginRouter.Run(":8081")
