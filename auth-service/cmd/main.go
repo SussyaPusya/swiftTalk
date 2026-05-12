@@ -37,16 +37,33 @@ func main() {
 
 	srvc := service.NewService(repo, logger.Logger)
 
-	router := transport.NewRouter(srvc)
+	jwt, err := pkg.NewJWTManager("certs/private.pem", "certs/public.pem")
+	if err != nil {
+		logger.Error("error", zap.Error(err))
+		panic(err)
+	}
+
+	middleware := transport.NewMiddleware(jwt)
+	router := transport.NewRouter(srvc, middleware)
+
+	grpcHandler := transport.NewGRPCHandlers(jwt)
+
+	grpcServer := transport.NewGRPCServer(grpcHandler, &cfg.GRPC, logger.Logger)
 
 	go router.Run()
 	logger.Info("router started")
+
+	go grpcServer.Run()
+	logger.Info("grpc server started")
 
 	ctx, stop := signal.NotifyContext(ctx, syscall.SIGINT, syscall.SIGTERM)
 
 	defer stop()
 
 	<-ctx.Done()
+
+	grpcServer.ShutDown()
+	logger.Info("grpc server stopped")
 
 	logger.Info("Service shutdown...")
 

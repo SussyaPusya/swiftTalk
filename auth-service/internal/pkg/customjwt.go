@@ -19,7 +19,7 @@ type JWTManager struct {
 
 type Claims struct {
 	Username string `json:"username"`
-	UserID   int    `json:"user_id"`
+	UserID   string `json:"user_id"`
 	jwt.RegisteredClaims
 }
 

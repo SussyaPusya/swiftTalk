@@ -22,8 +22,8 @@ type router struct {
 	middleware *Middleware
 }
 
-func NewRouter(s Service) *router {
-	return &router{s: s}
+func NewRouter(s Service, middleware *Middleware) *router {
+	return &router{s: s, middleware: middleware}
 }
 
 func (r *router) Run() {

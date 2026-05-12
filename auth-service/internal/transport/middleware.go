@@ -12,7 +12,7 @@ type Middleware struct {
 	j *pkg.JWTManager
 }
 
-func New(m *pkg.JWTManager) *Middleware {
+func NewMiddleware(m *pkg.JWTManager) *Middleware {
 	return &Middleware{
 		j: m,
 	}
