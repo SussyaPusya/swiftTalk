@@ -1,14 +1,18 @@
 
-PROTO_PATH := api
-OUTPUT_PATH := .
-BINARY_NAME := myapp
+PROTO_PATH := client/pb
+OUTPUT_PATH := client
+BINARY_NAME := auth_service
 
 # Цель по умолчанию
 all: build
 
 # Генерация кода из .proto файлов
 generate:
-	protoc --go_out=$(OUTPUT_PATH) --go-grpc_out=$(OUTPUT_PATH) --grpc-gateway_out=$(OUTPUT_PATH) --openapiv2_out $(OUTPUT_PATH)  $(PROTO_PATH)/account.proto
+	protoc --proto_path=$(PROTO_PATH) --go_out=$(OUTPUT_PATH) --go_opt=paths=source_relative --go-grpc_out=$(OUTPUT_PATH) --go-grpc_opt=paths=source_relative $(PROTO_PATH)/auth_service.proto
+
+ping:
+	ls
+
 
 # Сборка бинарника
 build: generate
@@ -24,4 +28,4 @@ install-tools:
 	go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
 	go install github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-grpc-gateway@latest
 
-.PHONY: all generate build clean install-tools
+.PHONY: all generate build clean install-tools ping

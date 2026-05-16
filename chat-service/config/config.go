@@ -8,7 +8,13 @@ import (
 )
 
 type Config struct {
+	GRPC     GRPC
 	Postgres Postgres
+}
+
+type GRPC struct {
+	Host string `env:"GRPC_HOST" env-default:"localhost"`
+	Port int    `env:"GRPC_PORT" env-default:"50051"`
 }
 
 type Postgres struct {

@@ -1,0 +1,30 @@
+syntax = "proto3";
+
+option go_package = "api/auth_service";
+
+package api;
+
+
+
+service Account_Service {
+
+  rpc Ping(PingRequest) returns (PingResponse);
+
+  rpc ValidateToken(ValidateTokenRequest) returns (ValidateTokenResponse);
+
+}
+message PingRequest {}
+
+message PingResponse {
+  string pingMessage = 1;
+}
+
+
+message ValidateTokenRequest {
+  string token = 1;
+}
+
+message ValidateTokenResponse {
+  bool isValid = 1;
+  string userId = 2;
+}
